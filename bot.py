@@ -239,7 +239,7 @@ def report(books):
 
 
 def main():
-    global last_disc, last_maintenance, consecutive_errors, next_trade_at, scan_offset, current_target_band
+    global last_disc, last_maintenance, consecutive_errors, next_trade_at, scan_offset, current_target_band, paper_halted
     cadence_due_since = None
 
     startup_data_check()
