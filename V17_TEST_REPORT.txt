@@ -1,0 +1,42 @@
+V17 $10 SCALED PAPER EXPERIMENT VALIDATION
+==========================================
+
+Safety / bankroll controls:
+- PAPER_TRADING=true (hard safety lock)
+- STARTING_CAPITAL default = $10
+- PAPER_TARGET_SCALE default = 0.10
+- MAX_BET_BANKROLL_PCT default = 0.10
+- MAX_OPEN_EXPOSURE_PCT default = 0.50
+- MAX_TOTAL_EXPOSURE default = $10 absolute cap
+- PAPER_MAX_DRAWDOWN_PCT default = 0.30
+- MIN_PAPER_FILL_USD default = $0.01
+- FRESH_START default = false; use true only for the first clean experiment on a persistent Railway volume.
+
+Execution / cadence controls:
+- Concurrent order-book retrieval retained.
+- Default loop interval = 0.25s.
+- Discovery refresh = 5s.
+- Cadence fallback is bounded to one decision event; the same due event is never retried every loop.
+
+Accounting:
+- Each accepted paper bet logs BET #, SPENT, CUMULATIVE_SPEND, CASH_REMAINING,
+  OPEN_EXPOSURE, EQUITY, OPEN_EXPOSURE_PCT, MODEL_TARGET and SCALED_TARGET.
+- Cumulative spend is lifetime paper turnover and is not treated as bankroll usage.
+- paper_state.json persists cash, positions, realized P&L and cumulative spend.
+
+Risk behavior:
+- The model-derived target is scaled before the paper cash/exposure guards.
+- The single-bet cap is 10% of bankroll by default.
+- Aggregate open exposure is capped at 50% of bankroll by default.
+- New entries halt at a 30% marked-equity drawdown; existing positions continue to settle.
+
+Strategy preservation:
+- strategy.py matches the prior V17 $10 experiment package byte-for-byte.
+- Trader-derived entry-count ratios, regime targets, trajectory shares, side persistence,
+  fine-band sizing and hard cutoff are unchanged.
+
+Validation:
+- pytest: 51 passed
+- py_compile: passed for strategy.py, bot.py, market_discovery.py, paper_ledger.py,
+  research_logger.py, paper_risk.py
+- No live order placement is enabled or performed.
